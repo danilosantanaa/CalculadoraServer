@@ -1,3 +1,4 @@
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,67 +25,161 @@ public class Protocolo {
     }
 
     public Protocolo processarDados() {
-        // Verificando ação que deve ser realizado
+        /*
+        * Expressão regular para validar entrada de dados enviado pelo cliente e conforme com a validação,
+        * será redirecionado para a operação, caso os dados enviado pelo cliente esteja correto.
+        * Verifica quais operações será realizado e jogar o ID da operação.
+        * */
         if(Pattern.matches("SOMA[0-9\s\n\\+]+", this.getDados())) this.id_action = 1;
-        else if (Pattern.matches("DATA\n", this.getDados())) this.id_action = 2;
-        else if (Pattern.matches("BYE\n", this.getDados())) this.id_action = 3;
-        else if (Pattern.matches("(AJUDA|HELP)\n", this.getDados())) this.id_action = 4;
-        else if (Pattern.matches("(DESLIGAR)(\n?)", this.getDados())) this.id_action = 5;
+        else if(Pattern.matches("MULT[0-9\s\n\\*]+", this.getDados())) this.id_action = 2;
+        else if(Pattern.matches("SUB[0-9\s\n\\*]+", this.getDados())) this.id_action = 3;
+        else if(Pattern.matches("DIV[0-9\s\n\\*]+", this.getDados())) this.id_action = 4;
+        else if(Pattern.matches("PORC|porc\s*[0-9]+\s*\\%\s*[0-9]+\n?", this.getDados())) this.id_action = 5;
+        else if(Pattern.matches("(POTENCIA|potencia)(\s*[0-9]+\s*\\^\s*[0-9]+)(\n?)", this.getDados())) this.id_action = 6;
+        else if(Pattern.matches("(RAIZQ|raizQ)(\s*[0-9]+)(\n?)", this.getDados())) this.id_action = 7;
+        else if (Pattern.matches("DATA\n", this.getDados())) this.id_action = 8;
+        else if (Pattern.matches("BYE\n", this.getDados())) this.id_action = 9;
+        else if (Pattern.matches("(AJUDA|HELP)\n", this.getDados())) this.id_action = 10;
 
+        // Realizando operação de acordo com a validação da expressão regular
+        this.realizarProcesso();
+        return this;
+    }
+
+    private void realizarProcesso() {
+        /*
+         * De acordo com a operação solicitada pelo cliente, será redirecionado para a função que realiza a operação
+         * */
         this.status = 200;
         switch(this.id_action) {
-            case 1:
-                this.somar();
+            case 1: // SOMA
+                this.response = this.somar();
                 break;
-            case 2:
+            case 2: // MULTIPLICAÇÃO
+                this.response = multiplicar();
+                break;
+            case 3: // SUBTRAIR
+                this.response = subtrair();
+                break;
+            case 4: // DIVISÂO
+                this.response = divisao();
+                break;
+            case 5: // PORCENTAGEM
+                this.response = porcentagem();
+                break;
+            case 6: // POTENCIA
+                this.response = potencia();
+                break;
+            case 7: // RAIZ QUADRADA
+                this.response = raizQuadrada();
+                break;
+            case 8: // DATA
                 this.response = "DATA = " + this.getData();
                 break;
-            case 3:
+            case 9: // Encerramento da conexão
                 this.status = 100;
-                this.response = "Servidor será desligado. Bye!";
+                this.response = "Cliente será desconectado. Bye!";
                 break;
-            case 4:
-                this.response = "\n========= HELPE ======== \n";
-                this.response += "Para somar você pode digitar soma N1 + N2 + N3 + ... + Nn\n";
-                this.response += "Para mostrar data, basta digitar \"data\"\nPara finalizar, digite \"bye\".\n";
-                this.response += "=========================\n";
-                break;
-            case 5:
-                this.status = 101;
-                this.response = "SERVIDOR SENDO DESLIGADO!";
+            case 10: // Manual de uso
+                this.response = this.mostrarManual();
                 break;
             default:
                 this.status = 404; // Not Found "Não encontrado"
         }
+    }
 
-        return this;
+    /* Metodo com objetivo de retornar o manual de uso do protocolo */
+    public String mostrarManual() {
+        String manual = "";
+        try {
+            File file = new File("./manual.txt");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String st;
+            while((st = br.readLine()) != null) {
+                manual += st + "\n";
+            }
+        } catch (FileNotFoundException e) {
+            manual = "<<< ERRO ao tentar carregar o arquivo. Arquivo não encontrado!";
+            System.err.println(manual);
+        } catch (IOException e) {
+            manual = e.getMessage();
+            e.printStackTrace();
+        }
+
+        return manual;
     }
 
     public int statusCode() {
         return this.status;
     }
 
-    public String getResponse() {
-        return this.response;
+    /*
+    * Métodos responsáveis por efetuar as 4 operações básicas
+    * */
+    private String somar(){
+        return "SOMA = " + operacao('+');
     }
 
-    private void somar() {
-        // Montando expressão regular para pegar os numero
+    private String multiplicar() {
+        return "MULT = " + operacao('*');
+    }
+
+    private String subtrair() {
+        return "SUB = " + operacao('-');
+    }
+
+    private String divisao() {
+        return "DIV = " + operacao('/');
+    }
+
+    /*
+    * Métodos responsáveis pelas operações de porcentagem, raiz quadrada e potência
+    * */
+    public String porcentagem() {
+        return "PORC = " + operacao('%');
+    }
+
+    public String potencia() {
+        return "POTENCIA = " + operacao('^');
+    }
+
+    public String raizQuadrada() {
+        return "RAIZ = " + operacao('r');
+    }
+
+    /*
+    * Métodos responsáveis por realizar a operação conforme o operador informado como argumento.
+    * */
+    private String operacao(char operacao) {
+        // Montando expressão regular para pegar os numeros de uma operação
         Pattern patternNum = Pattern.compile("[0-9]+");
         Matcher m = patternNum.matcher(this.getDados().toUpperCase(Locale.ROOT));
 
         // Realizando a soma
-        int soma = 0;
+        double result = 0;
+        int num_capturado = 0;
         while(m.find()) {
-            soma += Integer.parseInt(m.group());
+            num_capturado = Integer.parseInt(m.group());
+            result = operacao == '+' ? result + num_capturado :
+                     operacao == '*' ? (result == 0 ? 1 : result) * num_capturado :
+                     operacao == '/' ? (result == 0 ? num_capturado : result / num_capturado) :
+                     operacao == '-' ? (result == 0 ? num_capturado : result - num_capturado) :
+                     operacao == '%' ? (result == 0 ? num_capturado : result * num_capturado / 100) :
+                     operacao == '^' ? (result == 0 ? num_capturado : Math.pow(result, num_capturado)) :
+                     operacao == 'r' ?  Math.sqrt(num_capturado) : 0;
         }
 
-        this.response = "SOMA = " + String.valueOf(soma);
+        return String.valueOf(result);
     }
 
     /* Metodo acessor e modificador */
     public void setDados(String dados) {
         this.dados = dados.toUpperCase(Locale.ROOT);
+    }
+
+    public String getResponse() {
+        return this.response;
     }
 
     public void setDados(byte [] dados) {
