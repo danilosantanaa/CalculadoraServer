@@ -27,7 +27,7 @@ RAIZ QUADRADA: RAIZQ N
 ## 3. Explicação do projeto
 
 ### 3.1. Sobre o Projeto
-O projeto foi criado usado o conceito aprendido na disciplina de sistemas distribuídos. De forma resumida, foi criado
+O projeto foi criado usando o conceito aprendido na disciplina de sistemas distribuídos. De forma resumida, foi criado
 dois servidores especialistas: O servidor A fica responsável por realizar a operação as quatro operações matematicos (+, -, /, *) e o 
 servidor B fica responsável por realizar a operação de potência, raiz quadrada e porcentagem. Também foi criado um protocolo
 que fica responsável por processar as requisições tanto do cliente, como também do servidor.
