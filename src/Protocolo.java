@@ -35,7 +35,7 @@ public class Protocolo {
         else if(Pattern.matches("MULT[0-9\s\n\\*]+", this.getDados())) this.id_action = 2;
         else if(Pattern.matches("SUB[0-9\s\n\\-]+", this.getDados())) this.id_action = 3;
         else if(Pattern.matches("DIV[0-9\s\n\\/]+", this.getDados())) this.id_action = 4;
-        else if(Pattern.matches("PORC|porc\s*[0-9]+\s*\\%\s*[0-9]+\n?", this.getDados())) this.id_action = 5;
+        else if(Pattern.matches("(PORC|porc)\s*[0-9]+\s*\\%\s*[0-9]+\n?", this.getDados())) this.id_action = 5;
         else if(Pattern.matches("(POT|pot)(\s*[0-9]+\s*\\^\s*[0-9]+)(\n?)", this.getDados())) this.id_action = 6;
         else if(Pattern.matches("(RAIZQ|raizQ)(\s*[0-9]+)(\n?)", this.getDados())) this.id_action = 7;
         else if (Pattern.matches("DATA\n", this.getDados())) this.id_action = 8;
