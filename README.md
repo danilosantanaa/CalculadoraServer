@@ -11,7 +11,7 @@ ADIÇÃO(SOMAR): SOMA N1 + N2 + N3 + ... + Nn
 MULTIPLICAÇÂO: MULT N1 * N2 + N3 * ... * Nn
 SUBTRAÇÃO: SUB N1 - N2 - N3 - ... - Nn
 DIVISÃO: DIV N1 / N2 / N3 / ... / Nn
-POTÊNCIA: POT N1 ^ N 2
+POTÊNCIA: POT N1 ^ N2
 PORCENTAGEM: PORC N1 % N2
 RAIZ QUADRADA: RAIZQ N
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,8 +20,8 @@ RAIZ QUADRADA: RAIZQ N
 ## 2. Operações Extras
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-DATA: Mostrar data e hora do servidor
-BYE: Encerra a conexão com o servidor
+"DATA" - Mostrar data e hora do servidor
+"BYE" - Encerra a conexão com o servidor
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## 3. Explicação do projeto
