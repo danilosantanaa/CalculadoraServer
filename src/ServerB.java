@@ -20,7 +20,6 @@ public class ServerB {
                 Thread t = new ClientHandler(c, i, o);
 
                 t.start();
-
             }
         }
         catch (Exception err){
