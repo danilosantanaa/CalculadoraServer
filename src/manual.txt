@@ -1,11 +1,9 @@
-# Calculadora Distribuida
 ======= MANUAL DE USO =======
 Para realizar as operações, basta digitar os seguintes comandos:
 
 ------------------------
-~~~~~~~~~~~~~~~~~~~~~~~
 1) Operações matemático
-
+~~~~~~~~~~~~~~~~~~~~~~~
 ADIÇÃO(SOMAR): SOMA N1 + N2 + N3 + ... + Nn
 MULTIPLICAÇÂO: MULT N1 * N2 + N3 * ... * Nn
 SUBTRAÇÃO: SUB N1 - N2 - N3 - ... - Nn
@@ -16,9 +14,10 @@ RAIZ QUADRADA: RAIZQ N
 
 ------------------------
 2) Operações Extras
-
+~~~~~~~~~~~~~~~~~~~~~~~~
 DATA: Mostrar data e hora do servidor
 BYE: Encerra a conexão com o servidor
-~~~~~~~~~~~~~~~~~~~~~~~~
-Copyright (c) - Danilo Santana; 2022;
+
+================================
+Copyright (c) - Danilo Santana; %anoAtual;
 --------------------------------

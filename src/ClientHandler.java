@@ -20,7 +20,7 @@ public class ClientHandler extends Thread {
         try {
             Protocolo protocolo;
             do {
-                byte[] line = new byte[300];
+                byte[] line = new byte[30000];
                 i.read(line);
 
                 protocolo = new Protocolo(line).processarDados();

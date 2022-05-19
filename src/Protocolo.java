@@ -3,6 +3,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,10 +33,10 @@ public class Protocolo {
         * */
         if(Pattern.matches("SOMA[0-9\s\n\\+]+", this.getDados())) this.id_action = 1;
         else if(Pattern.matches("MULT[0-9\s\n\\*]+", this.getDados())) this.id_action = 2;
-        else if(Pattern.matches("SUB[0-9\s\n\\*]+", this.getDados())) this.id_action = 3;
-        else if(Pattern.matches("DIV[0-9\s\n\\*]+", this.getDados())) this.id_action = 4;
+        else if(Pattern.matches("SUB[0-9\s\n\\-]+", this.getDados())) this.id_action = 3;
+        else if(Pattern.matches("DIV[0-9\s\n\\/]+", this.getDados())) this.id_action = 4;
         else if(Pattern.matches("PORC|porc\s*[0-9]+\s*\\%\s*[0-9]+\n?", this.getDados())) this.id_action = 5;
-        else if(Pattern.matches("(POTENCIA|potencia)(\s*[0-9]+\s*\\^\s*[0-9]+)(\n?)", this.getDados())) this.id_action = 6;
+        else if(Pattern.matches("(POT|pot)(\s*[0-9]+\s*\\^\s*[0-9]+)(\n?)", this.getDados())) this.id_action = 6;
         else if(Pattern.matches("(RAIZQ|raizQ)(\s*[0-9]+)(\n?)", this.getDados())) this.id_action = 7;
         else if (Pattern.matches("DATA\n", this.getDados())) this.id_action = 8;
         else if (Pattern.matches("BYE\n", this.getDados())) this.id_action = 9;
@@ -53,35 +54,35 @@ public class Protocolo {
         this.status = 200;
         switch(this.id_action) {
             case 1: // SOMA
-                this.response = this.somar();
+                this.setResponse(this.somar());
                 break;
             case 2: // MULTIPLICAÇÃO
-                this.response = multiplicar();
+                this.setResponse(this.multiplicar());
                 break;
             case 3: // SUBTRAIR
-                this.response = subtrair();
+                this.setResponse(this.subtrair());
                 break;
             case 4: // DIVISÂO
-                this.response = divisao();
+                this.setResponse(this.divisao());
                 break;
             case 5: // PORCENTAGEM
-                this.response = porcentagem();
+                this.setResponse(this.porcentagem());
                 break;
             case 6: // POTENCIA
-                this.response = potencia();
+                this.setResponse(this.potencia());
                 break;
             case 7: // RAIZ QUADRADA
-                this.response = raizQuadrada();
+                this.setResponse(this.raizQuadrada());
                 break;
             case 8: // DATA
-                this.response = "DATA = " + this.getData();
+                this.setResponse(this.getData());
                 break;
             case 9: // Encerramento da conexão
                 this.status = 100;
-                this.response = "Cliente será desconectado. Bye!";
+                this.setResponse("Cliente será desconectado. Bye!");
                 break;
             case 10: // Manual de uso
-                this.response = this.mostrarManual();
+                this.setResponse(this.mostrarManual());
                 break;
             default:
                 this.status = 404; // Not Found "Não encontrado"
@@ -92,12 +93,12 @@ public class Protocolo {
     public String mostrarManual() {
         String manual = "";
         try {
-            File file = new File("./manual.txt");
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            File file = new File(new File("").getCanonicalFile() + "\\README.md");
+            Scanner sc = new Scanner(file);
 
             String st;
-            while((st = br.readLine()) != null) {
-                manual += st + "\n";
+            while(sc.hasNextLine()) {
+                manual += sc.nextLine() + "\n";
             }
         } catch (FileNotFoundException e) {
             manual = "<<< ERRO ao tentar carregar o arquivo. Arquivo não encontrado!";
@@ -178,6 +179,15 @@ public class Protocolo {
         this.dados = dados.toUpperCase(Locale.ROOT);
     }
 
+    private void setResponse(String response) {
+        this.response = "[SRC: SERVER A] :: ";
+        if(this.getID() >= 5 && this.getID() <= 7) {
+            this.response = "[SRC: SERVER B] :: ";
+        }
+
+        this.response += response;
+    }
+
     public String getResponse() {
         return this.response;
     }
@@ -195,5 +205,9 @@ public class Protocolo {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         LocalDateTime agora = LocalDateTime.now();
         return dtf.format(agora);
+    }
+
+    public int getID() {
+        return this.id_action;
     }
 }
