@@ -22,7 +22,12 @@ RAIZ QUADRADA: RAIZQ N
 
 "DATA" - Mostrar data e hora do servidor
 "BYE" - Encerra a conexão com o servidor
+"HELP" - Lista esse documento no proprio servidor. (Pode haver problema se esse arquivo README não estiver presente, deve está pasta raiz do projeto e também depende do sistema operacional.)
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+## Como Executar
+Para executar o projeto, você deve executar primeiramente o SERVIDOR A (ServerA.java) e SERVIDOR B (ServerB.java) e depois executar o cliente (Client.java).
+Caso esteja rodando no Intellij, você deve habilitar multipla execuções para permitir que rode múltiplos usuários acessar o servidor.
 
 ## 3. Explicação do projeto
 
